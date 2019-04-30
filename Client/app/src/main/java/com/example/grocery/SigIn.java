@@ -43,47 +43,56 @@ public class SigIn extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //Toast.makeText(SigIn.this, "Sign in activity!", Toast.LENGTH_SHORT).show();
-                final ProgressDialog mDialog=new ProgressDialog(SigIn.this);
-                mDialog.setMessage("Please wait...");
-                mDialog.show();
+                if (Common.isConnectedToInternet(getBaseContext())) {
 
-                table_user.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Toast.makeText(SigIn.this, "Sign in after!", Toast.LENGTH_SHORT).show();
-                        //Check if user not exist in database
 
-                        if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
-                            //Get User information
-                            mDialog.dismiss();
+                    final ProgressDialog mDialog = new ProgressDialog(SigIn.this);
+                    mDialog.setMessage("Please wait...");
+                    mDialog.show();
 
-                            User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
-                            user.setPhone(edtPhone.getText().toString()); //sets Phone
-                            if (user.getPassword().equals(edtPassword.getText().toString())) {
-                               Intent homeIntent=new Intent(SigIn.this,Home.class);
-                               homeIntent.putExtra("User", user.getName());
-                               Common.currentUser=user;
-                               startActivity(homeIntent);
-                               finish();
+                    table_user.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            //Toast.makeText(SigIn.this, "Sign in after!", Toast.LENGTH_SHORT).show();
+                            //Check if user not exist in database
+
+                            if (dataSnapshot.child(edtPhone.getText().toString()).exists()) {
+                                //Get User information
+                                mDialog.dismiss();
+
+                                User user = dataSnapshot.child(edtPhone.getText().toString()).getValue(User.class);
+                                user.setPhone(edtPhone.getText().toString()); //sets Phone
+                                if (user.getPassword().equals(edtPassword.getText().toString())) {
+                                    Intent homeIntent = new Intent(SigIn.this, Home.class);
+                                    homeIntent.putExtra("User", user.getName());
+                                    Common.currentUser = user;
+                                    startActivity(homeIntent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(SigIn.this, "Wrong Password!!!", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
-                                Toast.makeText(SigIn.this, "Wrong Password!!!", Toast.LENGTH_SHORT).show();
+                                mDialog.dismiss();
+                                Toast.makeText(SigIn.this, "User not exist in Database", Toast.LENGTH_SHORT).show();
+
                             }
                         }
-                        else
-                        {
-                            mDialog.dismiss();
-                            Toast.makeText(SigIn.this,"User not exist in Database",Toast.LENGTH_SHORT).show();
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
+                else
+                {
+                    Toast.makeText(SigIn.this,"Please Check Your Connection !!",Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
+
         });
 
 
