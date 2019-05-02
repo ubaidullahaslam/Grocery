@@ -10,8 +10,15 @@
 
 
 
+<<<<<<< Updated upstream
         <LinearLayout
             android:orientation="vertical"
+=======
+
+        <LinearLayout
+            android:orientation="vertical"
+
+>>>>>>> Stashed changes
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
@@ -23,30 +30,58 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/colorPrimary"
+<<<<<<< Updated upstream
+=======
+                android:text=""
+                android:textColor="@color/colorPrimary"
+>>>>>>> Stashed changes
                 android:textSize="34sp"
                 android:inputType="text"
                 app:met_baseColor="@color/colorPrimary"
                 app:met_floatingLabel="highlight"
                 app:met_primaryColor="@color/colorPrimary"
                 app:met_singleLineEllipsis="true"
+<<<<<<< Updated upstream
                 />
 
+=======
+
+                />
+>>>>>>> Stashed changes
             <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtComment"
                 android:hint="Comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/colorPrimary"
+<<<<<<< Updated upstream
+=======
+                android:text=""
+                android:textColor="@color/colorPrimary"
+>>>>>>> Stashed changes
                 android:textSize="24sp"
                 android:inputType="textMultiLine"
                 app:met_baseColor="@color/colorPrimary"
                 app:met_floatingLabel="highlight"
                 app:met_primaryColor="@color/colorPrimary"
                 app:met_singleLineEllipsis="true"
+<<<<<<< Updated upstream
                 />
 
+=======
+
+
+
+
+
+                />
+>>>>>>> Stashed changes
         </LinearLayout>
 
 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 </android.support.v7.widget.CardView>
