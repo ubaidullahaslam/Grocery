@@ -11,7 +11,7 @@ import com.example.grocery.R;
 
 public class GroceryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     public TextView grocery_name;
-    public ImageView grocery_image;
+    public ImageView grocery_image,share_image,fav_image;
 
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
@@ -24,6 +24,8 @@ public class GroceryViewHolder extends RecyclerView.ViewHolder implements View.O
 
         grocery_name=itemView.findViewById(R.id.grocery_name);
         grocery_image=itemView.findViewById(R.id.grocery_image);
+        fav_image=itemView.findViewById(R.id.fav);
+        share_image=(ImageView)itemView.findViewById(R.id.btnShare);
 
         itemView.setOnClickListener((View.OnClickListener) this);
     }

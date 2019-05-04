@@ -18,16 +18,17 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class SignUp extends AppCompatActivity {
 
-    MaterialEditText edtPhone,edtName,edtPassword;
+    MaterialEditText edtPhone,edtName,edtPassword,edtSecureCode;
     Button btnSignUp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        edtName=findViewById(R.id.edtName);
-        edtPassword=findViewById(R.id.edtPassword);
-        edtPhone=findViewById(R.id.edtPhone);
+        edtName = (MaterialEditText)findViewById(R.id.edtName);
+        edtPassword = (MaterialEditText)findViewById(R.id.edtPassword);
+        edtPhone = (MaterialEditText)findViewById(R.id.edtPhone);
+        edtSecureCode = (MaterialEditText)findViewById(R.id.edtSecureCode);
 
 
         btnSignUp=findViewById(R.id.btnSignUp);
@@ -58,7 +59,9 @@ public class SignUp extends AppCompatActivity {
                         else
                         {
                             mDialog.dismiss();
-                            User user=new User(edtName.getText().toString(),edtPassword.getText().toString());
+                            User user=new User(edtName.getText().toString()
+                                    ,edtPassword.getText().toString(),
+                                    edtSecureCode.getText().toString());
                             table_user.child(edtPhone.getText().toString()).setValue(user);
                             Toast.makeText(SignUp.this,"Sign up Successfully!",Toast.LENGTH_SHORT).show();
                             finish();
