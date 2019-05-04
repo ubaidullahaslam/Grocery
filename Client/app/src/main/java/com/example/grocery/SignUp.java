@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.grocery.Common.Common;
 import com.example.grocery.Model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,14 +43,15 @@ public class SignUp extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Common.isConnectedToInternet(getBaseContext())) {
 
-                final ProgressDialog mDialog=new ProgressDialog(SignUp.this);
-                mDialog.setMessage("Please wait...");
-                mDialog.show();
+                    final ProgressDialog mDialog = new ProgressDialog(SignUp.this);
+                    mDialog.setMessage("Please wait...");
+                    mDialog.show();
 
-                table_user.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    table_user.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         if(dataSnapshot.child(edtPhone.getText().toString()).exists())
                         {
@@ -66,19 +68,24 @@ public class SignUp extends AppCompatActivity {
                             Toast.makeText(SignUp.this,"Sign up Successfully!",Toast.LENGTH_SHORT).show();
                             finish();
 
+                            }
+
+
                         }
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
+                        }
+                    });
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
+                } else {
+                    Toast.makeText(SignUp.this, "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
         });
+
 
 
 

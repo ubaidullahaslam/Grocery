@@ -20,7 +20,6 @@ android {
 
 dependencies {
 
-    implementation 'com.facebook.android:facebook-share:[4,5)'
     implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     //Fixed crash issues

@@ -1,8 +1,6 @@
 package com.example.grocery;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.grocery.Database.Database;
 import com.example.grocery.Interface.ItemClickListener;
 import com.example.grocery.Model.Grocery;
 import com.example.grocery.ViewHolder.GroceryViewHolder;
@@ -36,6 +33,7 @@ public class GroceryList extends AppCompatActivity {
     DatabaseReference groceryList;
 
     String categoryId="";
+    SwipeRefreshLayout swipeRefreshLayout;
 
     FirebaseRecyclerAdapter<Grocery,GroceryViewHolder> adapter;
 
@@ -91,22 +89,35 @@ public class GroceryList extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         groceryList=database.getReference("Grocery");
-
-        //Local DB
-        localDB=new Database(this);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark
+                );
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //Get Intent here
+                if(getIntent()!=null)
+                    categoryId=getIntent().getStringExtra("CategoryId");
+                if(!categoryId.isEmpty() && categoryId!=null)
+                {
+                    if (Common.isConnectedToInternet(getBaseContext()))
+                        loadListGrocery(categoryId);
+                    else
+                    {
+                        Toast.makeText(GroceryList.this,"Please Check Your Connection !!",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
 
         recyclerView=(RecyclerView) findViewById(R.id.recycler_grocery);
         recyclerView.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        //Get Intent here
-        if(getIntent()!=null)
-            categoryId=getIntent().getStringExtra("CategoryId");
-        if(!categoryId.isEmpty() && categoryId!=null)
-        {
-            loadListGrocery(categoryId);
-        }
+
 
     }
 
@@ -178,6 +189,7 @@ public class GroceryList extends AppCompatActivity {
         //set Adapter
 
         recyclerView.setAdapter(adapter);
+        swipeRefreshLayout.setRefreshing(false);
 
     }
 }
