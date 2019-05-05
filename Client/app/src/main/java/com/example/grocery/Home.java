@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -56,37 +57,6 @@ public class Home extends AppCompatActivity
         toolbar.setTitle("Menu");
 
         setSupportActionBar(toolbar);
-        //view
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_orange_dark,
-                android.R.color.holo_blue_dark
-                 );
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if(Common.isConnectedToInternet(getBaseContext()))
-                    loadMenu();
-                else {
-                    Toast.makeText(getBaseContext(), "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-        });
-        // default , load for first time
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                if(Common.isConnectedToInternet(getBaseContext()))
-                    loadMenu();
-                else {
-                    Toast.makeText(getBaseContext(), "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-            }
-        });
 
 
         //initFirebase
@@ -125,9 +95,42 @@ public class Home extends AppCompatActivity
         //load menu
         recycler_menu=findViewById(R.id.recycler_menu);
         recycler_menu.setHasFixedSize(true);
-        layoutManager=new LinearLayoutManager(this);
+        //layoutManager=new LinearLayoutManager(this);
+        layoutManager=new GridLayoutManager(this,2);
         recycler_menu.setLayoutManager(layoutManager);
-      //  if(Common.isConnectedToInternet(this))
+        //view
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark
+        );
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(Common.isConnectedToInternet(getBaseContext()))
+                    loadMenu();
+                else {
+                    Toast.makeText(getBaseContext(), "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+        // default , load for first time
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if(Common.isConnectedToInternet(getBaseContext()))
+                    loadMenu();
+                else {
+                    Toast.makeText(getBaseContext(), "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+        });
+
+        //  if(Common.isConnectedToInternet(this))
        //     loadMenu();
        // else {
         //    Toast.makeText(this, "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();

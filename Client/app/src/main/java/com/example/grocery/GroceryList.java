@@ -1,6 +1,9 @@
 package com.example.grocery;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.grocery.Common.Common;
+import com.example.grocery.Database.Database;
 import com.example.grocery.Interface.ItemClickListener;
 import com.example.grocery.Model.Grocery;
 import com.example.grocery.ViewHolder.GroceryViewHolder;
@@ -80,8 +85,8 @@ public class GroceryList extends AppCompatActivity {
         setContentView(R.layout.activity_grocery_list);
 
         //Init Facebook
-        callbackManager= CallbackManager.Factory.create();
-        shareDialog=new ShareDialog(this);
+        callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
 
 
 
@@ -89,42 +94,59 @@ public class GroceryList extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         groceryList=database.getReference("Grocery");
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
-                android.R.color.holo_green_dark,
-                android.R.color.holo_orange_dark,
-                android.R.color.holo_blue_dark
-                );
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //Get Intent here
-                if(getIntent()!=null)
-                    categoryId=getIntent().getStringExtra("CategoryId");
-                if(!categoryId.isEmpty() && categoryId!=null)
-                {
-                    if (Common.isConnectedToInternet(getBaseContext()))
-                        loadListGrocery(categoryId);
-                    else
-                    {
-                        Toast.makeText(GroceryList.this,"Please Check Your Connection !!",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-
         recyclerView=(RecyclerView) findViewById(R.id.recycler_grocery);
         recyclerView.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
+                    android.R.color.holo_green_dark,
+                    android.R.color.holo_orange_dark,
+                    android.R.color.holo_blue_dark
+            );
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    //Get Intent here
+                    if (getIntent() != null)
+                        categoryId = getIntent().getStringExtra("CategoryId");
+                    if (!categoryId.isEmpty() && categoryId != null) {
+                        if (Common.isConnectedToInternet(getBaseContext()))
+                            loadListGrocery(categoryId);
+                        else {
+                            Toast.makeText(GroceryList.this, "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                }
 
 
+
+
+            });
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (getIntent() != null)
+                    categoryId = getIntent().getStringExtra("CategoryId");
+                if (!categoryId.isEmpty() && categoryId != null) {
+                    if (Common.isConnectedToInternet(getBaseContext()))
+                        loadListGrocery(categoryId);
+                    else {
+                        Toast.makeText(GroceryList.this, "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+            }
+        });
 
     }
-
     private void loadListGrocery(String categoryId) {
 
-        adapter=new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(Grocery.class,
-                R.layout.grocery_item,GroceryViewHolder.class,
+        adapter = new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(Grocery.class,
+                R.layout.grocery_item, GroceryViewHolder.class,
                 groceryList.orderByChild("MenuId").equalTo(categoryId) //like Select * from Grocery where MenuId=
         ) {
             @Override
@@ -141,17 +163,14 @@ public class GroceryList extends AppCompatActivity {
                 viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (!localDB.isFavorite(adapter.getRef(position).getKey()))
-                        {
+                        if (!localDB.isFavorite(adapter.getRef(position).getKey())) {
                             localDB.addToFavorites(adapter.getRef(position).getKey());
                             viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
-                            Toast.makeText(GroceryList.this,""+model.getName()+" was added to Favorites",Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
+                            Toast.makeText(GroceryList.this, "" + model.getName() + " was added to Favorites", Toast.LENGTH_SHORT).show();
+                        } else {
                             localDB.removeFromFavorites(adapter.getRef(position).getKey());
                             viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                            Toast.makeText(GroceryList.this,""+model.getName()+" was removed from Favorites",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(GroceryList.this, "" + model.getName() + " was removed from Favorites", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -167,29 +186,24 @@ public class GroceryList extends AppCompatActivity {
                 });
 
 
-
-
-
-                final Grocery local=model;
+                final Grocery local = model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                       Toast.makeText(GroceryList.this,""+local.getName(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroceryList.this, "" + local.getName(), Toast.LENGTH_SHORT).show();
                         //Start New Activity
 
-                        Intent groceryDetail=new Intent(GroceryList.this,GroceryDetails.class);
-                        groceryDetail.putExtra("GroceryId",adapter.getRef(position).getKey());  //send grocery id to new activity
+                        Intent groceryDetail = new Intent(GroceryList.this, GroceryDetails.class);
+                        groceryDetail.putExtra("GroceryId", adapter.getRef(position).getKey());  //send grocery id to new activity
                         startActivity(groceryDetail);
                     }
                 });
 
-
-                }
+            }
         };
-        //set Adapter
-
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setRefreshing(false);
 
-    }
+               }
 }
