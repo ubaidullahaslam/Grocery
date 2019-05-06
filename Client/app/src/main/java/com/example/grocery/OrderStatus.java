@@ -19,7 +19,6 @@ public class OrderStatus extends AppCompatActivity {
     public RecyclerView.LayoutManager layoutManager;
 
     FirebaseRecyclerAdapter<Request, OrderViewHolder> adapter;
-
     FirebaseDatabase database;
     DatabaseReference requests;
 
@@ -32,7 +31,6 @@ public class OrderStatus extends AppCompatActivity {
         //Firebase
         database=FirebaseDatabase.getInstance();
         requests=database.getReference("Requests");
-
         recyclerView=(RecyclerView)findViewById(R.id.listOrders);
         recyclerView.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(this);

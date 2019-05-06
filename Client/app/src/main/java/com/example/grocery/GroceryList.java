@@ -1,13 +1,19 @@
 package com.example.grocery;
 
 import android.content.Intent;
+<<<<<<< Updated upstream
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+=======
+import android.support.annotation.NonNull;
+>>>>>>> Stashed changes
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -23,10 +29,17 @@ import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroceryList extends AppCompatActivity {
 
@@ -41,6 +54,11 @@ public class GroceryList extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
 
     FirebaseRecyclerAdapter<Grocery,GroceryViewHolder> adapter;
+    // search functionality
+
+    FirebaseRecyclerAdapter<Grocery,GroceryViewHolder> searchAdapter;
+    List<String> suggestList = new ArrayList<>();
+    MaterialSearchBar materialSearchBar;
 
     //Favourites
     Database localDB;
@@ -128,9 +146,70 @@ public class GroceryList extends AppCompatActivity {
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
+<<<<<<< Updated upstream
                 if (getIntent() != null)
                     categoryId = getIntent().getStringExtra("CategoryId");
                 if (!categoryId.isEmpty() && categoryId != null) {
+=======
+                materialSearchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
+                materialSearchBar.setHint("Enter Your Product");
+                loadSuggest();
+                materialSearchBar.setLastSuggestions(suggestList);
+                materialSearchBar.setCardViewElevation(10);
+                materialSearchBar.addTextChangeListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        // when user types their test ,we will change suggest list
+                        List<String> suggest = new ArrayList<String>();
+                        for(String search:suggestList)
+                        {
+                            if(search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))
+                                suggest.add(search);
+                        }
+                        materialSearchBar.setLastSuggestions(suggest);
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+                    @Override
+                    public void onSearchStateChanged(boolean enabled) {
+                        // when search bar is close
+                        // restore original adapter
+                        if(!enabled)
+                            recyclerView.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onSearchConfirmed(CharSequence text) {
+                        // when search finishes
+                        // show reasult of search adapter
+                        startSearch(text);
+
+                    }
+
+                    @Override
+                    public void onButtonClicked(int buttonCode) {
+
+                    }
+                });
+
+
+                //Get Intent here
+                if(getIntent()!=null)
+                    categoryId=getIntent().getStringExtra("CategoryId");
+                if(!categoryId.isEmpty() && categoryId!=null)
+                {
+>>>>>>> Stashed changes
                     if (Common.isConnectedToInternet(getBaseContext()))
                         loadListGrocery(categoryId);
                     else {
@@ -142,6 +221,69 @@ public class GroceryList extends AppCompatActivity {
             }
         });
 
+<<<<<<< Updated upstream
+=======
+        recyclerView=(RecyclerView) findViewById(R.id.recycler_grocery);
+        recyclerView.setHasFixedSize(true);
+        layoutManager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        //search
+
+
+    }
+    private void startSearch(CharSequence text){
+        searchAdapter = new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(
+            Grocery.class,
+            R.layout.grocery_item,
+            GroceryViewHolder.class,
+                    groceryList.orderByChild("Name").equalTo(text.toString()) // compare name
+
+        ){
+            @Override
+            protected void populateViewHolder(GroceryViewHolder viewHolder, Grocery model, int position) {
+                viewHolder.grocery_name.setText(model.getName());
+                Picasso.with(getBaseContext()).load(model.getImage())
+                        .into(viewHolder.grocery_image);
+
+                final Grocery local=model;
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, boolean isLongClick) {
+                        Toast.makeText(GroceryList.this,""+local.getName(),Toast.LENGTH_SHORT).show();
+                        //Start New Activity
+
+                        Intent groceryDetail=new Intent(GroceryList.this,GroceryDetails.class);
+                        groceryDetail.putExtra("GroceryId",searchAdapter.getRef(position).getKey());  //send grocery id to new activity
+                        startActivity(groceryDetail);
+                    }
+                });
+
+                 }
+        };
+        recyclerView.setAdapter(searchAdapter); // set adapter for recycler view is search results
+    }
+
+    private void loadSuggest() {
+
+        groceryList.orderByChild("MenuId").equalTo(categoryId)
+           .addValueEventListener(new ValueEventListener() {
+               @Override
+               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                   for(DataSnapshot postSnapshot:dataSnapshot.getChildren())
+                   {
+                       Grocery item = postSnapshot.getValue(Grocery.class);
+                       suggestList.add(item.getName());   // add name of product to suggest list
+                   }
+               }
+
+               @Override
+               public void onCancelled(@NonNull DatabaseError databaseError) {
+
+               }
+           });
+
+>>>>>>> Stashed changes
     }
     private void loadListGrocery(String categoryId) {
 

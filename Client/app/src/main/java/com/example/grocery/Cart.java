@@ -84,20 +84,10 @@ public class Cart extends AppCompatActivity {
         alertDialog.setTitle("One more step!");
         alertDialog.setMessage("Enter your address");
 
-<<<<<<< Updated upstream
-
-        LayoutInflater inflater=this.getLayoutInflater();
-        View order_address_comment= inflater.inflate(R.layout.order_address_comment,null);
-
-        final MaterialEditText edtAddress=(MaterialEditText)order_address_comment.findViewById(R.id.edtAddress);
-        final MaterialEditText edtComment=(MaterialEditText)order_address_comment.findViewById(R.id.edtComment);
-
-=======
         LayoutInflater inflator = this.getLayoutInflater();
         View order_address_comment = inflator.inflate(R.layout.order_address_comment,null);
         final MaterialEditText edtAddress = (MaterialEditText) order_address_comment.findViewById(R.id.edtAddress);
         final MaterialEditText edtComment = (MaterialEditText) order_address_comment.findViewById(R.id.edtComment);
->>>>>>> Stashed changes
         alertDialog.setView(order_address_comment);
         alertDialog.setIcon(R.drawable.ic_shopping_cart_black_24dp);
 
@@ -111,11 +101,7 @@ public class Cart extends AppCompatActivity {
                         edtAddress.getText().toString(),
 
                         txtTotalPrice.getText().toString(),
-<<<<<<< Updated upstream
-                        "0", //status
-=======
                         "0", // status
->>>>>>> Stashed changes
                         edtComment.getText().toString(),
                         cart
                 );

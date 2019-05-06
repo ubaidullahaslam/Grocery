@@ -104,14 +104,11 @@ public class GroceryDetails extends AppCompatActivity implements RatingDialogLis
         if(!groceryId.isEmpty())
         {
             if(Common.isConnectedToInternet(this))
-<<<<<<< Updated upstream
+
             {
                 getDetailGrocery(groceryId);
                 getRatingGrocery(groceryId);
             }
-=======
-                getDetailGrocery(groceryId);
->>>>>>> Stashed changes
             else
             {
                 Toast.makeText(GroceryDetails.this,"Please Check Your Connection !!",Toast.LENGTH_SHORT).show();
