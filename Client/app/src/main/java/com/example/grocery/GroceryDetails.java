@@ -107,7 +107,7 @@ public class GroceryDetails extends AppCompatActivity implements RatingDialogLis
 
             {
                 getDetailGrocery(groceryId);
-                getRatingGrocery(groceryId);
+               // getRatingGrocery(groceryId);
             }
             else
             {
@@ -184,7 +184,6 @@ public class GroceryDetails extends AppCompatActivity implements RatingDialogLis
                 grocery_name.setText(currentGrocery.getName());
 
                 grocery_description.setText(currentGrocery.getDescription());
-
 
 
             }

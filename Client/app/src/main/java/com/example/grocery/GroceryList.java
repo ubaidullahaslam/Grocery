@@ -1,12 +1,9 @@
 package com.example.grocery;
 
 import android.content.Intent;
-<<<<<<< Updated upstream
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-=======
 import android.support.annotation.NonNull;
->>>>>>> Stashed changes
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -136,21 +133,14 @@ public class GroceryList extends AppCompatActivity {
                             return;
                         }
                     }
-
                 }
-
-
-
-
             });
         swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-<<<<<<< Updated upstream
                 if (getIntent() != null)
                     categoryId = getIntent().getStringExtra("CategoryId");
                 if (!categoryId.isEmpty() && categoryId != null) {
-=======
                 materialSearchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
                 materialSearchBar.setHint("Enter Your Product");
                 loadSuggest();
@@ -209,7 +199,6 @@ public class GroceryList extends AppCompatActivity {
                     categoryId=getIntent().getStringExtra("CategoryId");
                 if(!categoryId.isEmpty() && categoryId!=null)
                 {
->>>>>>> Stashed changes
                     if (Common.isConnectedToInternet(getBaseContext()))
                         loadListGrocery(categoryId);
                     else {
@@ -217,12 +206,9 @@ public class GroceryList extends AppCompatActivity {
                         return;
                     }
                 }
-
             }
-        });
+        }});
 
-<<<<<<< Updated upstream
-=======
         recyclerView=(RecyclerView) findViewById(R.id.recycler_grocery);
         recyclerView.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(this);
@@ -283,14 +269,14 @@ public class GroceryList extends AppCompatActivity {
                }
            });
 
->>>>>>> Stashed changes
     }
     private void loadListGrocery(String categoryId) {
 
         adapter = new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(Grocery.class,
                 R.layout.grocery_item, GroceryViewHolder.class,
                 groceryList.orderByChild("MenuId").equalTo(categoryId) //like Select * from Grocery where MenuId=
-        ) {
+        )
+        {
             @Override
             protected void populateViewHolder(final GroceryViewHolder viewHolder, final Grocery model, final int position) {
                 viewHolder.grocery_name.setText(model.getName());
@@ -298,8 +284,8 @@ public class GroceryList extends AppCompatActivity {
                         .into(viewHolder.grocery_image);
 
                 //Add favourites
-                if (localDB.isFavorite(adapter.getRef(position).getKey()))
-                    viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
+//                if (localDB.isFavorite(adapter.getRef(position).getKey()))
+//                    viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
 
                 //Click to change state of favorites
                 viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
@@ -340,7 +326,6 @@ public class GroceryList extends AppCompatActivity {
                         startActivity(groceryDetail);
                     }
                 });
-
             }
         };
         adapter.notifyDataSetChanged();
