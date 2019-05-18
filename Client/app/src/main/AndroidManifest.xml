@@ -11,12 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".Services.ListenOrder"
+            android:enabled="true"
+            android:exported="true"></service>
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-                    android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-
-        <activity android:name=".OrderStatus"></activity>
+        <activity android:name=".OrderStatus" />
         <activity android:name=".Cart" />
         <activity android:name=".GroceryDetails" />
         <activity android:name=".GroceryList" />
@@ -35,9 +39,9 @@
         </activity>
 
         <provider
-            android:authorities="com.facebook.app.FacebookContentProvider889051074760206"
             android:name="com.facebook.FacebookContentProvider"
-            android:exported="true"/>
+            android:authorities="com.facebook.app.FacebookContentProvider889051074760206"
+            android:exported="true" />
     </application>
 
 </manifest>

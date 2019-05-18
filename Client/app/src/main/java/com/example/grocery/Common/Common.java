@@ -3,6 +3,7 @@ package com.example.grocery.Common;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Switch;
 
 import com.example.grocery.Model.Category;
 import com.example.grocery.Model.User;
@@ -21,10 +22,28 @@ public class Common {
                 for(int i =0;i<info.length;i++)
                 {
                     if(info[i].getState() == NetworkInfo.State.CONNECTED)
-                       return true;
+                        return true;
                 }
             }
         }
         return false;
     }
+    public static String convertCodeToStatus(String code )
+    {
+        String status="";
+        switch (code)
+        {
+            case "0":
+                status="Placed";
+                break;
+            case "1":
+                status="On the way";
+                break;
+            default:
+                status="Shipped";
+                break;
+        }
+        return status;
+    }
+
 }

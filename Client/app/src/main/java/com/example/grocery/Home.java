@@ -26,6 +26,7 @@ import com.example.grocery.Interface.ItemClickListener;
 import com.example.grocery.Model.Category;
 import com.example.grocery.Model.Order;
 import com.example.grocery.Model.User;
+import com.example.grocery.Services.ListenOrder;
 import com.example.grocery.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 //import com.google.android.gms.common.internal.service.Common;
@@ -129,7 +130,8 @@ public class Home extends AppCompatActivity
 
             }
         });
-
+        Intent intentS=new Intent(this, ListenOrder.class);
+        startService(intentS);
         //  if(Common.isConnectedToInternet(this))
        //     loadMenu();
        // else {

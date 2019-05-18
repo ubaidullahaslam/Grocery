@@ -21,7 +21,6 @@ import com.example.grocery.Interface.ItemClickListener;
 import com.example.grocery.Model.Grocery;
 import com.example.grocery.ViewHolder.GroceryViewHolder;
 import com.facebook.CallbackManager;
-import com.facebook.share.Share;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
@@ -34,12 +33,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroceryList extends AppCompatActivity {
-
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -56,7 +53,6 @@ public class GroceryList extends AppCompatActivity {
     FirebaseRecyclerAdapter<Grocery,GroceryViewHolder> searchAdapter;
     List<String> suggestList = new ArrayList<>();
     MaterialSearchBar materialSearchBar;
-
     //Favourites
     Database localDB;
 
@@ -64,7 +60,8 @@ public class GroceryList extends AppCompatActivity {
     CallbackManager callbackManager;
     ShareDialog shareDialog;
 
-    //Create Target from Picasso
+
+
     Target target= new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -94,106 +91,28 @@ public class GroceryList extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_list);
-
         //Init Facebook
         callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(this);
 
-
+        //Local DB
+        localDB=new Database(this);
 
         //Firebase
 
         database = FirebaseDatabase.getInstance();
         groceryList=database.getReference("Grocery");
-        recyclerView=(RecyclerView) findViewById(R.id.recycler_grocery);
-        recyclerView.setHasFixedSize(true);
-        layoutManager=new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
-                    android.R.color.holo_green_dark,
-                    android.R.color.holo_orange_dark,
-                    android.R.color.holo_blue_dark
-            );
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    //Get Intent here
-                    if (getIntent() != null)
-                        categoryId = getIntent().getStringExtra("CategoryId");
-                    if (!categoryId.isEmpty() && categoryId != null) {
-                        if (Common.isConnectedToInternet(getBaseContext()))
-                            loadListGrocery(categoryId);
-                        else {
-                            Toast.makeText(GroceryList.this, "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                }
-            });
-        swipeRefreshLayout.post(new Runnable() {
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark
+        );
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void run() {
-                if (getIntent() != null)
-                    categoryId = getIntent().getStringExtra("CategoryId");
-                if (!categoryId.isEmpty() && categoryId != null) {
-                materialSearchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
-                materialSearchBar.setHint("Enter Your Product");
-                loadSuggest();
-                materialSearchBar.setLastSuggestions(suggestList);
-                materialSearchBar.setCardViewElevation(10);
-                materialSearchBar.addTextChangeListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        // when user types their test ,we will change suggest list
-                        List<String> suggest = new ArrayList<String>();
-                        for(String search:suggestList)
-                        {
-                            if(search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))
-                                suggest.add(search);
-                        }
-                        materialSearchBar.setLastSuggestions(suggest);
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-                materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-                    @Override
-                    public void onSearchStateChanged(boolean enabled) {
-                        // when search bar is close
-                        // restore original adapter
-                        if(!enabled)
-                            recyclerView.setAdapter(adapter);
-                    }
-
-                    @Override
-                    public void onSearchConfirmed(CharSequence text) {
-                        // when search finishes
-                        // show reasult of search adapter
-                        startSearch(text);
-
-                    }
-
-                    @Override
-                    public void onButtonClicked(int buttonCode) {
-
-                    }
-                });
-
-
+            public void onRefresh() {
                 //Get Intent here
                 if(getIntent()!=null)
                     categoryId=getIntent().getStringExtra("CategoryId");
@@ -201,13 +120,33 @@ public class GroceryList extends AppCompatActivity {
                 {
                     if (Common.isConnectedToInternet(getBaseContext()))
                         loadListGrocery(categoryId);
-                    else {
-                        Toast.makeText(GroceryList.this, "Please Check Your Connection !!", Toast.LENGTH_SHORT).show();
+                    else
+                    {
+                        Toast.makeText(GroceryList.this,"Please Check Your Connection !!",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+            }
+        });
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                //Get Intent here
+                if(getIntent()!=null)
+                    categoryId=getIntent().getStringExtra("CategoryId");
+                if(!categoryId.isEmpty() && categoryId!=null)
+                {
+                    if (Common.isConnectedToInternet(getBaseContext()))
+                        loadListGrocery(categoryId);
+                    else
+                    {
+                        Toast.makeText(GroceryList.this,"Please Check Your Connection !!",Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
             }
-        }});
+        });
 
         recyclerView=(RecyclerView) findViewById(R.id.recycler_grocery);
         recyclerView.setHasFixedSize(true);
@@ -215,15 +154,67 @@ public class GroceryList extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         //search
+        materialSearchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
+        materialSearchBar.setHint("Enter Your Product");
+        loadSuggest();
+        materialSearchBar.setLastSuggestions(suggestList);
+        materialSearchBar.setCardViewElevation(10);
+        materialSearchBar.addTextChangeListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // when user types their test ,we will change suggest list
+                List<String> suggest = new ArrayList<String>();
+                for(String search:suggestList)
+                {
+                    if(search.toLowerCase().contains(materialSearchBar.getText().toLowerCase()))
+                        suggest.add(search);
+                }
+                materialSearchBar.setLastSuggestions(suggest);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        materialSearchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+            @Override
+            public void onSearchStateChanged(boolean enabled) {
+                // when search bar is close
+                // restore original adapter
+                if(!enabled)
+                    recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onSearchConfirmed(CharSequence text) {
+                // when search finishes
+                // show reasult of search adapter
+                startSearch(text);
+
+            }
+
+            @Override
+            public void onButtonClicked(int buttonCode) {
+
+            }
+        });
+
 
 
     }
     private void startSearch(CharSequence text){
         searchAdapter = new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(
-            Grocery.class,
-            R.layout.grocery_item,
-            GroceryViewHolder.class,
-                    groceryList.orderByChild("Name").equalTo(text.toString()) // compare name
+                Grocery.class,
+                R.layout.grocery_item,
+                GroceryViewHolder.class,
+                groceryList.orderByChild("Name").equalTo(text.toString()) // compare name
 
         ){
             @Override
@@ -245,7 +236,7 @@ public class GroceryList extends AppCompatActivity {
                     }
                 });
 
-                 }
+            }
         };
         recyclerView.setAdapter(searchAdapter); // set adapter for recycler view is search results
     }
@@ -253,39 +244,39 @@ public class GroceryList extends AppCompatActivity {
     private void loadSuggest() {
 
         groceryList.orderByChild("MenuId").equalTo(categoryId)
-           .addValueEventListener(new ValueEventListener() {
-               @Override
-               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                   for(DataSnapshot postSnapshot:dataSnapshot.getChildren())
-                   {
-                       Grocery item = postSnapshot.getValue(Grocery.class);
-                       suggestList.add(item.getName());   // add name of product to suggest list
-                   }
-               }
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot postSnapshot:dataSnapshot.getChildren())
+                        {
+                            Grocery item = postSnapshot.getValue(Grocery.class);
+                            suggestList.add(item.getName());   // add name of product to suggest list
+                        }
+                    }
 
-               @Override
-               public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-               }
-           });
+                    }
+                });
 
     }
-    private void loadListGrocery(String categoryId) {
 
-        adapter = new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(Grocery.class,
-                R.layout.grocery_item, GroceryViewHolder.class,
+    private void loadListGrocery(String categoryId) {
+        adapter=new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(Grocery.class,
+                R.layout.grocery_item,GroceryViewHolder.class,
                 groceryList.orderByChild("MenuId").equalTo(categoryId) //like Select * from Grocery where MenuId=
-        )
-        {
+        ) {
             @Override
-            protected void populateViewHolder(final GroceryViewHolder viewHolder, final Grocery model, final int position) {
+            protected void populateViewHolder(final GroceryViewHolder viewHolder,final Grocery model,final int position) {
                 viewHolder.grocery_name.setText(model.getName());
                 Picasso.with(getBaseContext()).load(model.getImage())
                         .into(viewHolder.grocery_image);
 
+
                 //Add favourites
-//                if (localDB.isFavorite(adapter.getRef(position).getKey()))
-//                    viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
+                if (localDB.isFavorite(adapter.getRef(position).getKey()))
+                    viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
 
                 //Click to change state of favorites
                 viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
@@ -302,8 +293,8 @@ public class GroceryList extends AppCompatActivity {
                         }
                     }
                 });
-
-                //Click To Share
+//
+//                //Click To Share
                 viewHolder.share_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -314,23 +305,26 @@ public class GroceryList extends AppCompatActivity {
                 });
 
 
-                final Grocery local = model;
+                final Grocery local=model;
                 viewHolder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
-                        Toast.makeText(GroceryList.this, "" + local.getName(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroceryList.this,""+local.getName(),Toast.LENGTH_SHORT).show();
                         //Start New Activity
 
-                        Intent groceryDetail = new Intent(GroceryList.this, GroceryDetails.class);
-                        groceryDetail.putExtra("GroceryId", adapter.getRef(position).getKey());  //send grocery id to new activity
+                        Intent groceryDetail=new Intent(GroceryList.this,GroceryDetails.class);
+                        groceryDetail.putExtra("GroceryId",adapter.getRef(position).getKey());  //send grocery id to new activity
                         startActivity(groceryDetail);
                     }
                 });
+
+
             }
         };
-        adapter.notifyDataSetChanged();
+        //set Adapter
+
         recyclerView.setAdapter(adapter);
         swipeRefreshLayout.setRefreshing(false);
 
-               }
+    }
 }

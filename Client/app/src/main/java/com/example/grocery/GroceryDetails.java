@@ -107,7 +107,7 @@ public class GroceryDetails extends AppCompatActivity implements RatingDialogLis
 
             {
                 getDetailGrocery(groceryId);
-               // getRatingGrocery(groceryId);
+                getRatingGrocery(groceryId);
             }
             else
             {

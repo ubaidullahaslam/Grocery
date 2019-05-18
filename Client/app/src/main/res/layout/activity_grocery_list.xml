@@ -8,27 +8,32 @@
     android:layout_height="match_parent"
     tools:context=".GroceryList">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+
         <com.mancj.materialsearchbar.MaterialSearchBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/searchBar"
-            android:layout_alignParentTop = "true"
-            app:mt_speechMode="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
             app:mt_hint="Enter your product"
-           />
+            app:mt_speechMode="false" />
 
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
             android:id="@+id/recycler_grocery"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            >
 
 
         </android.support.v7.widget.RecyclerView>
 
-    </RelativeLayout>
+    </LinearLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
