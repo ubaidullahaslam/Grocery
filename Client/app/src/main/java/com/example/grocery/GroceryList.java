@@ -103,7 +103,7 @@ public class GroceryList extends AppCompatActivity {
         //Firebase
 
         database = FirebaseDatabase.getInstance();
-        groceryList=database.getReference("Grocery");
+        groceryList=database.getReference("Foods");
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary,
                 android.R.color.holo_green_dark,
@@ -214,7 +214,7 @@ public class GroceryList extends AppCompatActivity {
                 Grocery.class,
                 R.layout.grocery_item,
                 GroceryViewHolder.class,
-                groceryList.orderByChild("Name").equalTo(text.toString()) // compare name
+                groceryList.orderByChild("name").equalTo(text.toString()) // compare name
 
         ){
             @Override
@@ -243,7 +243,7 @@ public class GroceryList extends AppCompatActivity {
 
     private void loadSuggest() {
 
-        groceryList.orderByChild("MenuId").equalTo(categoryId)
+        groceryList.orderByChild("menuId").equalTo(categoryId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,7 +265,7 @@ public class GroceryList extends AppCompatActivity {
     private void loadListGrocery(String categoryId) {
         adapter=new FirebaseRecyclerAdapter<Grocery, GroceryViewHolder>(Grocery.class,
                 R.layout.grocery_item,GroceryViewHolder.class,
-                groceryList.orderByChild("MenuId").equalTo(categoryId) //like Select * from Grocery where MenuId=
+                groceryList.orderByChild("menuId").equalTo(categoryId) //like Select * from Grocery where MenuId=
         ) {
             @Override
             protected void populateViewHolder(final GroceryViewHolder viewHolder,final Grocery model,final int position) {
