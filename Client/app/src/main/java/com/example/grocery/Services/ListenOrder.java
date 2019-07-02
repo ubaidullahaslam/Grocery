@@ -26,10 +26,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ListenOrder extends Service implements ChildEventListener {
+
+    FirebaseDatabase database;
+    DatabaseReference requests;
+
     public ListenOrder() {
     }
-    FirebaseDatabase database;
-    DatabaseReference request;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -41,12 +43,12 @@ public class ListenOrder extends Service implements ChildEventListener {
     public void onCreate() {
         super.onCreate();
         database = FirebaseDatabase.getInstance();
-        request= database.getReference("Requests");
+        requests= database.getReference("Requests");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        request.addChildEventListener(this);
+        requests.addChildEventListener(this);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -65,13 +67,15 @@ public class ListenOrder extends Service implements ChildEventListener {
         Intent intent=new Intent(this.getBaseContext(), OrderStatus.class);
         intent.putExtra("userPhone",request.getPhone());  //send grocery id to new activity
         PendingIntent pendingIntent=PendingIntent.getActivity(getBaseContext(),0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder builder=new NotificationCompat.Builder(getBaseContext());
+
         builder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setTicker("GOCO")
                 .setContentInfo("Your order was updated")
-                .setContentText("Order #"+key+"was updated status to "+ Common.convertCodeToStatus(request.getStatus()))
+                .setContentText("Order #"+key+"was updated to status "+ Common.convertCodeToStatus(request.getStatus()))
                 .setContentIntent(pendingIntent)
                 .setContentInfo("Info")
                 .setSmallIcon(R.mipmap.ic_launcher_round);

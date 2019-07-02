@@ -1,6 +1,7 @@
 package com.example.grocery;
 
 import android.content.DialogInterface;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,7 +33,7 @@ import java.util.Locale;
 
 import info.hoang8f.widget.FButton;
 
-public class Cart extends AppCompatActivity {
+public class Cart extends Fragment {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -45,25 +47,31 @@ public class Cart extends AppCompatActivity {
     List<Order> cart =new ArrayList<>();
 
     CartAdapter adapter;
+    View v;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        v=inflater.inflate(R.layout.activity_cart,container,false);
+        return v;
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cart);
-
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         //FireBAse
         database=FirebaseDatabase.getInstance();
         requests=database.getReference("Requests");
 
         //Init
-        recyclerView =(RecyclerView)findViewById(R.id.listCart);
+        recyclerView =(RecyclerView)v.findViewById(R.id.listCart);
         recyclerView.setHasFixedSize(true);
-        layoutManager=new LinearLayoutManager(this);
+        layoutManager=new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        txtTotalPrice=(TextView)findViewById(R.id.total);
-        btnPlace=(FButton)findViewById(R.id.btnPlaceOrder);
+        txtTotalPrice=(TextView)v.findViewById(R.id.total);
+        btnPlace=(FButton)v.findViewById(R.id.btnPlaceOrder);
 
         btnPlace.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +79,7 @@ public class Cart extends AppCompatActivity {
                 if(cart.size() > 0)
                     showAlertDialog();
                 else
-                    Toast.makeText(Cart.this,"Your Cart Is Empty !!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Your Cart Is Empty !!",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -80,7 +88,7 @@ public class Cart extends AppCompatActivity {
     }
 
     private void showAlertDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Cart.this);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
         alertDialog.setTitle("One more step!");
         alertDialog.setMessage("Enter your address");
 
@@ -112,9 +120,9 @@ public class Cart extends AppCompatActivity {
                         .setValue(request);
                 //Delete Cart
 
-                new Database(getBaseContext()).cleanCart();
-                Toast.makeText(Cart.this,"Thank You, Order Placed", Toast.LENGTH_SHORT).show();
-                finish();
+                new Database(getActivity()).cleanCart();
+                Toast.makeText(getActivity(),"Thank You, Order Placed", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
             }
         });
         alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -128,8 +136,8 @@ public class Cart extends AppCompatActivity {
     }
 
     private void loadListGrocery() {
-        cart=new Database(this).getCarts();
-        adapter=new CartAdapter(cart, this);
+        cart=new Database(getActivity()).getCarts();
+        adapter=new CartAdapter(cart, getActivity());
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
 
@@ -156,10 +164,10 @@ public class Cart extends AppCompatActivity {
         //we will remove item at List<Order> by position
         cart.remove(position);
       // After that we'll delete all data from SQlite
-        new Database(this).cleanCart();
+        new Database(getActivity()).cleanCart();
         // and final we will update all data from List<Order> to SQlite
         for(Order item:cart)
-           new Database(this).addToCart(item);
+           new Database(getActivity()).addToCart(item);
           // Refresh
         loadListGrocery();
     }

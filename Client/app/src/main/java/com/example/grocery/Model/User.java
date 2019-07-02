@@ -4,6 +4,7 @@ public class User {
     private String Name;
     private String Password;
     private String Phone;
+    private String image;
     private String IsStaff;
     private String secureCode;
 
@@ -16,6 +17,13 @@ public class User {
         IsStaff="false";
         this.secureCode=secureCode;
 
+    }
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getSecureCode() {

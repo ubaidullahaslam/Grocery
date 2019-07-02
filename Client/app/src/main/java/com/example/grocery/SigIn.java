@@ -68,7 +68,7 @@ public class SigIn extends AppCompatActivity {
                     mDialog.setMessage("Please wait...");
                     mDialog.show();
 
-                    table_user.addValueEventListener(new ValueEventListener() {
+                    table_user.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             //Toast.makeText(SigIn.this, "Sign in after!", Toast.LENGTH_SHORT).show();
@@ -86,6 +86,8 @@ public class SigIn extends AppCompatActivity {
                                     Common.currentUser = user;
                                     startActivity(homeIntent);
                                     finish();
+
+                                    table_user.removeEventListener(this);
                                 } else {
                                     Toast.makeText(SigIn.this, "Wrong Password!!!", Toast.LENGTH_SHORT).show();
                                 }

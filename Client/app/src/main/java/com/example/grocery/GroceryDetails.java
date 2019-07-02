@@ -57,7 +57,7 @@ public class GroceryDetails extends AppCompatActivity implements RatingDialogLis
 
         //Firebase
         database = FirebaseDatabase.getInstance();
-        grocery= database.getReference("Grocery");
+        grocery= database.getReference("Foods");
         ratingTbl=database.getReference("Rating");
 
         //Init view
